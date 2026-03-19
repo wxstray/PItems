@@ -8,6 +8,7 @@ use pocketmine\network\mcpe\protocol\SetHudPacket;
 use pocketmine\network\mcpe\protocol\types\hud\HudElement;
 use pocketmine\network\mcpe\protocol\types\hud\HudVisibility;
 use pocketmine\player\Player;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\TextFormat;
 use ReflectionException;
 use voidworks\ppitems\items\BasePartnerItem;
@@ -36,13 +37,9 @@ class HideHearts extends BasePartnerItem implements OnAttackPartnerItem {
         $player->sendMessage(TextFormat::colorize('&r&7Your health is now hidden for &f5 &7seconds.'));
         $damager->sendMessage(TextFormat::colorize('&r&7You have hidden the health of &f' . $player->getName() . '&7.'));
 
-        TimedListener::listen(
-            Loader::getInstance(),
-            function () use ($player): void {
-                $resetPacket = SetHudPacket::create([HudElement::HEALTH], HudVisibility::RESET);
-                $player->getNetworkSession()->sendDataPacket($resetPacket);
-            },
-            delay: 20 * 5
-        );
+        Loader::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function() use ($player): void {
+            $resetPacket = SetHudPacket::create([HudElement::HEALTH], HudVisibility::RESET);
+            $player->getNetworkSession()->sendDataPacket($resetPacket);
+        }), 20*5);
     }
 }
