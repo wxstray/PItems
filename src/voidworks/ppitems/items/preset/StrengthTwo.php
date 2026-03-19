@@ -21,12 +21,15 @@ class StrengthTwo extends BasePartnerItem implements OnUsePartnerItem {
     }
 
     public function onUse(Player $player): void {
+        $item = $player->getInventory()->getItemInHand();
         $effectManager = $player->getEffects();
         $effect = new EffectInstance(VanillaEffects::STRENGTH(), 20 * 7, 1);
 
         if ($effectManager->add($effect)) {
             $player->sendMessage(TextFormat::colorize('&r&aYou have received &eStrength II &afor ' . ($effect->getDuration() / 20) . ' seconds!'));
 
+            $item->pop();
+            $player->getInventory()->setItemInHand($item);
         }
     }
 }
