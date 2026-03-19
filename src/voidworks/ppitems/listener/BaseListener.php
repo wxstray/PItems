@@ -36,11 +36,11 @@ final class BaseListener implements Listener {
 
         $session = $this->sessionHandler->getSession($player);
 
-        if ($this->sendCooldownMessageIfOnCooldown($player, $session, $partnerItem)) {
-            return;
-        }
-
         if ($partnerItem instanceof OnUsePartnerItem) {
+            if ($this->sendCooldownMessageIfOnCooldown($player, $session, $partnerItem)) {
+                return;
+            }
+
             $session->applyCooldowns($partnerItem);
             $partnerItem->onUse($event->getPlayer());
         }
@@ -71,11 +71,11 @@ final class BaseListener implements Listener {
         $partnerItem = $this->handler->getPartnerItem($damager->getInventory()->getItemInHand());
         $session = $this->sessionHandler->getSession($player);
 
-        if ($this->sendCooldownMessageIfOnCooldown($player, $session, $partnerItem)) {
-            return;
-        }
-
         if ($partnerItem instanceof OnAttackPartnerItem) {
+            if ($this->sendCooldownMessageIfOnCooldown($player, $session, $partnerItem)) {
+                return;
+            }
+
             $session->applyCooldowns($partnerItem);
             $partnerItem->onAttack($damager, $player);
         }
